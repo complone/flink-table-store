@@ -593,11 +593,11 @@ public class TableStoreHiveStorageHandlerITCase {
             List<String> primaryKeys,
             List<RowData> data)
             throws Exception {
-        String path = folder.newFolder().toURI().toString();
+        String path = "/usr/local/share/path/";
         Configuration conf = new Configuration();
         conf.setString(CoreOptions.PATH, path);
         conf.setInteger(CoreOptions.BUCKET, 2);
-        conf.setString(CoreOptions.FILE_FORMAT, "avro");
+        conf.setString(CoreOptions.FILE_FORMAT, "orc");
         FileStoreTable table =
                 FileStoreTestUtils.createFileStoreTable(conf, rowType, partitionKeys, primaryKeys);
 
@@ -606,12 +606,14 @@ public class TableStoreHiveStorageHandlerITCase {
 
     private String createAppendOnlyExternalTable(
             RowType rowType, List<String> partitionKeys, List<RowData> data) throws Exception {
-        String path = folder.newFolder().toURI().toString();
+        String path = "/usr/local/share/path/";
         Configuration conf = new Configuration();
         conf.setString(CoreOptions.PATH, path);
         conf.setInteger(CoreOptions.BUCKET, 2);
-        conf.setString(CoreOptions.FILE_FORMAT, "avro");
+        conf.setString(CoreOptions.FILE_FORMAT, "orc");
         conf.set(CoreOptions.WRITE_MODE, WriteMode.APPEND_ONLY);
+        conf.set(CoreOptions.COMPACTION_MAX_SORTED_RUN_NUM, 10);
+        conf.set(CoreOptions.COMPRESS_TYPE, "zlib");
         FileStoreTable table =
                 FileStoreTestUtils.createFileStoreTable(
                         conf, rowType, partitionKeys, Collections.emptyList());

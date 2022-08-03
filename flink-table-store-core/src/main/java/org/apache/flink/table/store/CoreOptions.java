@@ -234,7 +234,12 @@ public class CoreOptions implements Serializable {
                                     + "sum(size(f_i)) >= targetFileSize to trigger a compaction for "
                                     + "append-only table. This value avoids almost-full-file to be compacted, "
                                     + "which is not cost-effective.");
-
+    public static final ConfigOption<String> COMPRESS_TYPE =
+        ConfigOptions.key("compress")
+            .stringType()
+            .defaultValue("zlib")
+            .withDescription("Specify compression on the premise of using file.format to specify the file format. ");
+    
     public static final ConfigOption<Integer> COMPACTION_MAX_FILE_NUM =
             ConfigOptions.key("compaction.early-max.file-num")
                     .intType()

@@ -41,7 +41,7 @@ public class Levels {
 
     private final List<SortedRun> levels;
 
-    public Levels(Comparator<RowData> keyComparator, List<DataFileMeta> inputFiles, int numLevels) {
+    public Levels(Comparator<RowData> keyComparator, String compressType,  List<DataFileMeta> inputFiles, int numLevels) {
         this.keyComparator = keyComparator;
 
         // in case the num of levels is not specified explicitly

@@ -68,7 +68,7 @@ public abstract class FileStoreTableITCase extends AbstractTestBase {
         bEnv = TableEnvironment.create(EnvironmentSettings.newInstance().inBatchMode().build());
         sEnv = TableEnvironment.create(EnvironmentSettings.newInstance().inStreamingMode().build());
         sEnv.getConfig().getConfiguration().set(CHECKPOINTING_INTERVAL, Duration.ofMillis(100));
-        path = TEMPORARY_FOLDER.newFolder().toURI().toString();
+        path = "/usr/local/share/path/";
         prepareConfiguration(bEnv, path);
         prepareConfiguration(sEnv, path);
         prepareEnv();

@@ -134,6 +134,7 @@ public class MergeTreeWriter implements RecordWriter<KeyValue>, MemoryOwner {
         }
     }
 
+    // 准备提交的增量文件
     @Override
     public long memoryOccupancy() {
         return memTable.memoryOccupancy();

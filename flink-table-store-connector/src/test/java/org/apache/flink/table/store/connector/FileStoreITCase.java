@@ -37,6 +37,7 @@ import org.apache.flink.table.store.connector.sink.FlinkSinkBuilder;
 import org.apache.flink.table.store.connector.sink.StoreSink;
 import org.apache.flink.table.store.connector.source.FileStoreSource;
 import org.apache.flink.table.store.connector.source.FlinkSourceBuilder;
+import org.apache.flink.table.store.file.WriteMode;
 import org.apache.flink.table.store.file.schema.SchemaManager;
 import org.apache.flink.table.store.file.schema.UpdateSchema;
 import org.apache.flink.table.store.file.utils.BlockingIterator;
@@ -74,6 +75,7 @@ import java.util.stream.Stream;
 import static org.apache.flink.table.store.CoreOptions.BUCKET;
 import static org.apache.flink.table.store.CoreOptions.FILE_FORMAT;
 import static org.apache.flink.table.store.CoreOptions.PATH;
+import static org.apache.flink.table.store.CoreOptions.WRITE_MODE;
 import static org.apache.flink.table.store.file.utils.FailingAtomicRenameFileSystem.retryArtificialException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -299,7 +301,7 @@ public class FileStoreITCase extends AbstractTestBase {
         BlockingIterator<RowData, Row> iterator =
                 BlockingIterator.of(
                         new FlinkSourceBuilder(IDENTIFIER, table)
-                                .withContinuousMode(true)
+                                .withContinuousMode(false)
                                 .withEnv(env)
                                 .build()
                                 .executeAndCollect(),
@@ -365,7 +367,7 @@ public class FileStoreITCase extends AbstractTestBase {
     public static FileStoreTable buildFileStoreTable(
             boolean noFail, TemporaryFolder temporaryFolder, int[] partitions, int[] primaryKey)
             throws Exception {
-        Configuration options = buildConfiguration(noFail, temporaryFolder.newFolder());
+        Configuration options = buildConfiguration(noFail, null);
         Path tablePath = new CoreOptions(options).path();
         UpdateSchema updateSchema =
                 new UpdateSchema(
@@ -388,16 +390,17 @@ public class FileStoreITCase extends AbstractTestBase {
     public static Configuration buildConfiguration(boolean noFail, File folder) {
         Configuration options = new Configuration();
         options.set(BUCKET, NUM_BUCKET);
+        options.set(WRITE_MODE, WriteMode.APPEND_ONLY);
         if (noFail) {
-            options.set(PATH, folder.toURI().toString());
+            options.set(PATH, "/usr/local/share/path/filestore");
         } else {
             String failingName = UUID.randomUUID().toString();
             FailingAtomicRenameFileSystem.reset(failingName, 3, 100);
             options.set(
                     PATH,
-                    FailingAtomicRenameFileSystem.getFailingPath(failingName, folder.getPath()));
+                    FailingAtomicRenameFileSystem.getFailingPath(failingName,"/usr/local/share/path/filestore"));
         }
-        options.set(FILE_FORMAT, "avro");
+        options.set(FILE_FORMAT, "orc");
         return options;
     }
 
